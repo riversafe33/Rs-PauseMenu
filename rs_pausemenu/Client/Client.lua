@@ -1,38 +1,50 @@
 local Open = false
 local mapProp = nil
+local canOpenMenu = false
 
 CreateThread(function()
     while true do
         Wait(0)
+        DisableControlAction(0, 0x4A903C11)
 
-        local invActive = LocalPlayer.state.IsInvActive
-
-        if not IsPauseMenuActive() and not Open and not invActive then
-            if LocalPlayer.state.IsInSession 
-            and not LocalPlayer.state.PlayerIsInCharacterShops
-            and not LocalPlayer.state.IsInvOpen
-            and not LocalPlayer.state.IsInvActive
-            and not IsPedDeadOrDying(PlayerPedId(), false)
-            and IsUiappRunningByHash(`MAP`) ~= 1 then
-
-                DisableControlAction(0, 0x4A903C11) -- ESC
-
-                if IsDisabledControlJustPressed(0, 0x4A903C11) then
-                    OpenPauseMenu()
-                end
-            end
+        if IsDisabledControlJustPressed(0, 0x4A903C11) and canOpenMenu then
+            OpenPauseMenu()
         end
     end
 end)
 
 CreateThread(function()
     while true do
-        Wait(0)
+        Wait(300)
+        local invActive = LocalPlayer.state.IsInvActive
+        local playerPed = PlayerPedId()
+
+        canOpenMenu = false -- reset
+        if not IsPauseMenuActive() and not Open and not invActive then
+            if LocalPlayer.state.IsInSession
+            and not LocalPlayer.state.PlayerIsInCharacterShops
+            and not LocalPlayer.state.IsInvOpen
+            and not LocalPlayer.state.IsInvActive
+            and not IsPedDeadOrDying(playerPed, false)
+            and IsUiappRunningByHash(`MAP`) ~= 1 then
+                canOpenMenu = true
+            end
+        end
+    end
+end)
+
+CreateThread(function()
+    local lastMinute = -1
+    while true do
+        Wait(1000)
         if Open then
             local hour = GetClockHours()
             local minute = GetClockMinutes()
-            local timeString = string.format("%02d:%02d", hour, minute)
-            SendNUIMessage({ action = "updateClock", time = timeString })
+            if minute ~= lastMinute then
+                lastMinute = minute
+                local timeString = string.format("%02d:%02d", hour, minute)
+                SendNUIMessage({ action = "updateClock", time = timeString })
+            end
         end
     end
 end)
@@ -60,6 +72,7 @@ RegisterNUICallback('SendAction', function(data, cb)
     elseif data.action == 'exit' then
         TriggerServerEvent("pausemenu:quit")
     end
+
     if data.action ~= 'rules' then
         ClosePauseMenu()
     end
@@ -77,6 +90,7 @@ function OpenPauseMenu()
             action = 'show',
             labels = Config.MenuLabels
         })
+
         Open = true
         TriggerServerEvent("pausemenu:getRules")
 
@@ -88,6 +102,7 @@ function OpenPauseMenu()
         while not HasAnimDictLoaded(animDict) do
             Wait(10)
         end
+
         TaskPlayAnim(playerPed, animDict, animName, 1.0, 1.0, -1, 25, 0, false, false, false)
         Wait(500)
         SetEntityAnimSpeed(playerPed, animDict, animName, 0.8)
@@ -95,7 +110,6 @@ function OpenPauseMenu()
         Wait(500)
 
         local model = GetHashKey("mp001_mp_map01x")
-        
         RequestModel(model)
         while not HasModelLoaded(model) do
             Wait(10)
@@ -103,7 +117,6 @@ function OpenPauseMenu()
 
         mapProp = CreateObject(model, 0.0, 0.0, 0.0, true, true, false)
         local boneIndex = GetEntityBoneIndexByName(playerPed, "XH_L_Hand00")
-
         AttachEntityToEntity(mapProp, playerPed, boneIndex, -0.05, 0.12, 0.36, -31.0, -119.0, 14.0, true, true, false, true, 1, true)
     end
 end
@@ -113,7 +126,6 @@ function ClosePauseMenu()
     Open = false
 
     local playerPed = PlayerPedId()
-
     if IsEntityPlayingAnim(playerPed, "mech_inspection@mini_map@base", "hold", 3) then
         StopAnimTask(playerPed, "mech_inspection@mini_map@base", "hold", 1.0)
     end
@@ -125,4 +137,3 @@ function ClosePauseMenu()
         mapProp = nil
     end
 end
-
