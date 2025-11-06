@@ -19,7 +19,7 @@ CreateThread(function()
         local invActive = LocalPlayer.state.IsInvActive
         local playerPed = PlayerPedId()
 
-        canOpenMenu = false -- reset
+        canOpenMenu = false
         if not IsPauseMenuActive() and not Open and not invActive then
             if LocalPlayer.state.IsInSession
             and not LocalPlayer.state.PlayerIsInCharacterShops
