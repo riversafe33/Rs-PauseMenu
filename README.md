@@ -8,7 +8,7 @@ Your support goes directly toward upgrading my PC and developing more free scrip
 
 # --------------------------------------------------------------- #
 
-# Script to replace the game's original pause menu
+# Script to replace the game original pause menu
 
 # The logo must be in PNG format with a size of 200 x 200, and it should be placed in the HTML folder, replacing the existing one
 
