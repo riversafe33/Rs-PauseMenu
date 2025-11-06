@@ -36,7 +36,7 @@ end)
 CreateThread(function()
     local lastMinute = -1
     while true do
-        Wait(1000)
+        Wait(0)
         if Open then
             local hour = GetClockHours()
             local minute = GetClockMinutes()
