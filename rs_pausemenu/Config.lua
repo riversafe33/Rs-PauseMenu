@@ -13,7 +13,7 @@ Config.MenuLabels = {
     close = "Close"
 }
 
-Config.Reglas = {
+Config.TextRules = {
     -- Page 1: General Conduct
     [[
     Rule 1:
