@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pause Menu</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: rgba(0, 0, 0, 0.425);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: none;
+      justify-content: flex-start;
+      align-items: flex-start;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #menu {
+      margin-top: 15%;
+      margin-left: 5%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .menu-item {
+      font-family: 'Rye', cursive;
+      color: #9e6f28;
+      font-size: 36px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.2s, background-color 0.2s ease;
+      background-color: rgba(0, 0, 0, 0.322);
+      border: 2px solid #9e6f28;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .menu-item:hover {
+      color: #b18018;
+    }
+
+    #rules-box {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1400px;
+      height: 940px;
+      display: none;
+    }
+
+    #book-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      border-radius: 10px;
+    }
+
+    #rules-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      padding: 80px 100px;
+      height: 100%;
+      font-size: 18px;
+    }
+
+    .page {
+      font-family: 'Great Vibes', cursive;
+      width: 45%;
+      height: 100%;
+      white-space: pre-line;
+      overflow-y: auto;
+      line-height: 1.1;
+      font-size: 28px;
+      color: black;
+      background-color: transparent;
+      font-weight: bold;
+    }
+
+    .left-page {
+      padding: 45px 60px 40px 80px;
+      text-align: left;
+    }
+
+    .right-page {
+      padding: 45px 100px 40px 80px;
+      text-align: left;
+    }
+
+    #page-controls {
+      font-family: 'Rye', cursive;
+      position: absolute;
+      bottom: 70px;
+      left: 48%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-between;
+      width: 300px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #000000;
+      z-index: 3;
+      font-size: 22px;
+    }
+
+    #page-controls span:hover {
+      text-decoration: underline;
+    }
+
+    #close-rules {
+      font-family: 'Rye', cursive;
+      position: absolute;
+      bottom: 70px;
+      right: 200px;
+      color: #000000;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 3;
+    }
+
+    #close-rules:hover {
+      text-decoration: underline;
+    }
+
+    #logo {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 120px;
+      height: auto;
+      opacity: 0.9;
+    }
+
+    #clock {
+      font-family: 'Rye', cursive;
+      position: absolute;
+      color: #9e6f28;
+      display: none;
+      margin-top: 11%;
+      margin-left: 7%;
+    }
+
+    #clock-time {
+      font-family: 'Rye', cursive;
+      font-size: 50px;
+    }
+  </style>
+</head>
+<body>
+  <img id="logo" src="logo.png" alt="Logo del servidor" />
+  <div id="clock"><span id="clock-time">00:00</span></div>
+
+  <div id="menu">
+    <span class="menu-item" id="label-rules" onclick="showRules()"></span>
+    <span class="menu-item" id="label-resume" onclick="sendAction('resume')"></span>
+    <span class="menu-item" id="label-settings" onclick="sendAction('settings')"></span>
+    <span class="menu-item" id="label-map" onclick="sendAction('map')"></span>
+    <span class="menu-item" id="label-exit" onclick="sendAction('exit')"></span>
+  </div>
+
+  <div id="rules-box">
+    <img id="book-bg" src="pausebook.png" alt="Libro de reglas" />
+    <div id="rules-content">
+      <div class="page left-page" id="left-page"></div>
+      <div class="page right-page" id="right-page"></div>
+    </div>
+    <div id="page-controls">
+      <span id="label-prev" onclick="prevPage()"></span>
+      <span id="label-next" onclick="nextPage()"></span>
+    </div>
+    <div id="close-rules" onclick="hideRules()"></div>
+  </div>
+
+  <script>
+    let rulesPages = [];
+    let currentPair = 0;
+
+    function showRules() {
+      document.getElementById('rules-box').style.display = 'block';
+      updatePages();
+    }
+
+    function hideRules() {
+      document.getElementById('rules-box').style.display = 'none';
+    }
+
+    function updatePages() {
+      const left = rulesPages[currentPair * 2] || "";
+      const right = rulesPages[currentPair * 2 + 1] || "";
+      document.getElementById('left-page').innerText = left;
+      document.getElementById('right-page').innerText = right;
+    }
+
+    function nextPage() {
+      if ((currentPair + 1) * 2 < rulesPages.length) {
+        currentPair++;
+        updatePages();
+      }
+    }
+
+    function prevPage() {
+      if (currentPair > 0) {
+        currentPair--;
+        updatePages();
+      }
+    }
+
+    function sendAction(action) {
+      fetch(`https://${GetParentResourceName()}/SendAction`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      }).then(() => {
+        if (action !== 'rules') {
+          document.body.style.display = 'none';
+          document.getElementById('clock').style.display = 'none';
+        }
+      });
+    }
+
+    window.addEventListener('message', function (event) {
+      if (event.data.action === 'show') {
+        document.body.style.display = 'flex';
+        document.getElementById('clock').style.display = 'block';
+
+        if (event.data.labels) {
+          document.getElementById('label-rules').innerText = event.data.labels.rules;
+          document.getElementById('label-resume').innerText = event.data.labels.resume;
+          document.getElementById('label-settings').innerText = event.data.labels.settings;
+          document.getElementById('label-map').innerText = event.data.labels.map;
+          document.getElementById('label-exit').innerText = event.data.labels.exit;
+          document.getElementById('label-prev').innerText = event.data.labels.prev;
+          document.getElementById('label-next').innerText = event.data.labels.next;
+          document.getElementById('close-rules').innerText = event.data.labels.close;
+        }
+      }
+
+      if (event.data.action === 'loadRules') {
+        rulesPages = event.data.rules;
+        currentPair = 0;
+        updatePages();
+      }
+
+      if (event.data.action === 'updateClock') {
+        document.getElementById('clock-time').innerText = event.data.time;
+      }
+    });
+  </script>
+</body>
+</html>
