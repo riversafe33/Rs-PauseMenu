@@ -4,7 +4,7 @@ There’s absolutely no pressure to donate, but if my work has been helpful to y
 
 Your support goes directly toward upgrading my PC and developing more free scripts for everyone.
 
-#Thank you for your support! ❤️ https://ko-fi.com/riversafe33
+# Thank you for your support! ❤️ https://ko-fi.com/riversafe33
 
 # ------------------------------------------------------------------------- #
 
@@ -16,4 +16,4 @@ Your support goes directly toward upgrading my PC and developing more free scrip
 
 <img width="1232" height="677" alt="image" src="https://github.com/user-attachments/assets/be0a8a5d-5cd6-4ddb-939d-27e76b90e79d" />
 
-<img width="1185" height="679" alt="image" src="https://github.com/user-attachments/assets/e7e38aee-8074-4c41-9b8e-9a69bf4dff40" />
+<img width="1851" height="1040" alt="image" src="https://github.com/user-attachments/assets/169c4e76-fa8c-4c9c-ae04-948f741c1fcf" />
