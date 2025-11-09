@@ -5,31 +5,64 @@ local canOpenMenu = false
 CreateThread(function()
     while true do
         Wait(0)
-
         DisableControlAction(0, 'INPUT_FRONTEND_PAUSE') 
         DisableControlAction(0, 'INPUT_FRONTEND_PAUSE_ALTERNATE') 
+    end
+end)
 
-        if (IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE') or IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE_ALTERNATE')) and canOpenMenu then
-            OpenPauseMenu()
+CreateThread(function()
+    while true do
+        Wait(0)
+        if IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE_ALTERNATE') 
+        or IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE') then
+            if Open then
+                ClosePauseMenu()
+            elseif canOpenMenu then
+                OpenPauseMenu()
+            end
         end
     end
 end)
 
 CreateThread(function()
     while true do
-        Wait(300)
-        local invActive = LocalPlayer.state.IsInvActive
-        local playerPed = PlayerPedId()
+        Wait(500)
+        if Open then
+            local ped = PlayerPedId()
+            if IsPedDeadOrDying(ped, false) or IsUiappRunningByHash(`MAP`) == 1 then
+                ClosePauseMenu()
+            end
+        end
+    end
+end)
 
+CreateThread(function()
+    while true do
+        Wait(100)
+
+        local ped = PlayerPedId()
         canOpenMenu = false
-        if not IsPauseMenuActive() and not Open and not invActive then
-            if LocalPlayer.state.IsInSession
-            and not LocalPlayer.state.PlayerIsInCharacterShops
-            and not LocalPlayer.state.IsInvOpen
-            and not LocalPlayer.state.IsInvActive
-            and not IsPedDeadOrDying(playerPed, false)
-            and IsUiappRunningByHash(`MAP`) ~= 1 then
-                canOpenMenu = true
+
+        if not IsPauseMenuActive() and not Open then
+            if IsUiappRunningByHash(`MAP`) ~= 1 then 
+                
+                if Config.Framework == 'vorp' then
+                    local invActive = LocalPlayer.state.IsInvActive
+                    if LocalPlayer.state.IsInSession
+                    and not LocalPlayer.state.PlayerIsInCharacterShops
+                    and not LocalPlayer.state.IsInvOpen
+                    and not invActive then
+                        canOpenMenu = true
+                    end
+
+                elseif Config.Framework == 'rsg' then
+                    if LocalPlayer.state.isLoggedIn
+                    and not LocalPlayer.state.inClothingStore
+                    and not LocalPlayer.state.inv_busy
+                    and not LocalPlayer.state.isDead then
+                        canOpenMenu = true
+                    end
+                end
             end
         end
     end
@@ -57,6 +90,15 @@ AddEventHandler("pausemenu:receiveRules", function(data)
         action = "loadRules",
         rules = data
     })
+end)
+
+RegisterNUICallback('ToggleMenu', function(_, cb)
+    if Open then
+        ClosePauseMenu()
+    elseif canOpenMenu then
+        OpenPauseMenu()
+    end
+    cb('ok')
 end)
 
 RegisterNUICallback('exit', function(_, cb)
@@ -97,6 +139,12 @@ function OpenPauseMenu()
         TriggerServerEvent("pausemenu:getRules")
 
         local playerPed = PlayerPedId()
+
+        if mapProp then
+            DeleteObject(mapProp)
+            mapProp = nil
+        end
+
         local animDict = "mech_inspection@mini_map@base"
         local animName = "hold"
 
@@ -108,8 +156,6 @@ function OpenPauseMenu()
         TaskPlayAnim(playerPed, animDict, animName, 1.0, 1.0, -1, 25, 0, false, false, false)
         Wait(500)
         SetEntityAnimSpeed(playerPed, animDict, animName, 0.8)
-
-        Wait(500)
 
         local model = GetHashKey("mp001_mp_map01x")
         RequestModel(model)
@@ -125,6 +171,7 @@ end
 
 function ClosePauseMenu()
     SetNuiFocus(false, false)
+    SendNUIMessage({ action = "close" })
     Open = false
 
     local playerPed = PlayerPedId()
@@ -132,9 +179,8 @@ function ClosePauseMenu()
         StopAnimTask(playerPed, "mech_inspection@mini_map@base", "hold", 1.0)
     end
 
-    Wait(500)
-
     if mapProp then
+        DetachEntity(mapProp, true, true)
         DeleteObject(mapProp)
         mapProp = nil
     end
