@@ -181,106 +181,110 @@
     </div>
     <div id="close-rules" onclick="hideRules()"></div>
   </div>
+<script>
+  let rulesPages = [];
+  let currentPair = 0;
 
-  <script>
-    let rulesPages = [];
-    let currentPair = 0;
+  function showRules() {
+    document.getElementById('rules-box').style.display = 'block';
+    updatePages();
+  }
 
-    function showRules() {
-      document.getElementById('rules-box').style.display = 'block';
+  function hideRules() {
+    document.getElementById('rules-box').style.display = 'none';
+  }
+
+  function updatePages() {
+    const left = rulesPages[currentPair * 2] || "";
+    const right = rulesPages[currentPair * 2 + 1] || "";
+    document.getElementById('left-page').innerText = left;
+    document.getElementById('right-page').innerText = right;
+  }
+
+  function nextPage() {
+    if ((currentPair + 1) * 2 < rulesPages.length) {
+      currentPair++;
       updatePages();
     }
+  }
 
-    function hideRules() {
-      document.getElementById('rules-box').style.display = 'none';
+  function prevPage() {
+    if (currentPair > 0) {
+      currentPair--;
+      updatePages();
+    }
+  }
+
+  function sendAction(action) {
+    if (action === 'settings') {
+      document.body.style.display = 'none';
+      document.getElementById('clock').style.display = 'none';
     }
 
-    function updatePages() {
-      const left = rulesPages[currentPair * 2] || "";
-      const right = rulesPages[currentPair * 2 + 1] || "";
-      document.getElementById('left-page').innerText = left;
-      document.getElementById('right-page').innerText = right;
-    }
-
-    function nextPage() {
-      if ((currentPair + 1) * 2 < rulesPages.length) {
-        currentPair++;
-        updatePages();
-      }
-    }
-
-    function prevPage() {
-      if (currentPair > 0) {
-        currentPair--;
-        updatePages();
-      }
-    }
-
-    function sendAction(action) {
-      fetch(`https://${GetParentResourceName()}/SendAction`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action })
-      }).then(() => {
-        if (action !== 'rules') {
-          document.body.style.display = 'none';
-          document.getElementById('clock').style.display = 'none';
-        }
-      });
-    }
-
-    window.addEventListener('message', function (event) {
-      if (event.data.action === 'show') {
-        document.body.style.display = 'flex';
-        document.getElementById('clock').style.display = 'block';
-
-        if (event.data.labels) {
-          document.getElementById('label-rules').innerText = event.data.labels.rules;
-          document.getElementById('label-resume').innerText = event.data.labels.resume;
-          document.getElementById('label-settings').innerText = event.data.labels.settings;
-          document.getElementById('label-map').innerText = event.data.labels.map;
-          document.getElementById('label-exit').innerText = event.data.labels.exit;
-          document.getElementById('label-prev').innerText = event.data.labels.prev;
-          document.getElementById('label-next').innerText = event.data.labels.next;
-          document.getElementById('close-rules').innerText = event.data.labels.close;
-        }
-      }
-
-      if (event.data.action === 'loadRules') {
-        rulesPages = event.data.rules;
-        currentPair = 0;
-        updatePages();
-      }
-
-      if (event.data.action === 'updateClock') {
-        document.getElementById('clock-time').innerText = event.data.time;
-      }
-
-      if (event.data.action === 'close') {
+    fetch(`https://${GetParentResourceName()}/SendAction`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action })
+    }).then(() => {
+      if (action !== 'rules' && action !== 'settings') {
         document.body.style.display = 'none';
         document.getElementById('clock').style.display = 'none';
       }
     });
+  }
 
-    document.addEventListener('keydown', function (event) {
-      const key = event.key.toLowerCase();
+  window.addEventListener('message', function (event) {
+    if (event.data.action === 'show') {
+      document.body.style.display = 'flex';
+      document.getElementById('clock').style.display = 'block';
 
-      if (key === 'escape'  ||  key === 'p') {
-        event.preventDefault();
-
-        const rulesVisible = document.getElementById('rules-box').style.display === 'block';
-
-        if (rulesVisible) {
-          hideRules();
-        } else {
-          fetch(`https://${GetParentResourceName()}/ToggleMenu`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
-          });
-        }
+      if (event.data.labels) {
+        document.getElementById('label-rules').innerText = event.data.labels.rules;
+        document.getElementById('label-resume').innerText = event.data.labels.resume;
+        document.getElementById('label-settings').innerText = event.data.labels.settings;
+        document.getElementById('label-map').innerText = event.data.labels.map;
+        document.getElementById('label-exit').innerText = event.data.labels.exit;
+        document.getElementById('label-prev').innerText = event.data.labels.prev;
+        document.getElementById('label-next').innerText = event.data.labels.next;
+        document.getElementById('close-rules').innerText = event.data.labels.close;
       }
-    });
-  </script>
+    }
+
+    if (event.data.action === 'loadRules') {
+      rulesPages = event.data.rules;
+      currentPair = 0;
+      updatePages();
+    }
+
+    if (event.data.action === 'updateClock') {
+      document.getElementById('clock-time').innerText = event.data.time;
+    }
+
+    if (event.data.action === 'close') {
+      document.body.style.display = 'none';
+      document.getElementById('clock').style.display = 'none';
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    const key = event.key.toLowerCase();
+
+    if (key === 'escape' || key === 'p') {
+      event.preventDefault();
+
+      const rulesVisible = document.getElementById('rules-box').style.display === 'block';
+
+      if (rulesVisible) {
+        hideRules();
+      } else {
+        fetch(`https://${GetParentResourceName()}/ToggleMenu`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+      }
+    }
+  });
+</script>
 </body>
 </html>
