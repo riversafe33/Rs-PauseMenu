@@ -255,6 +255,31 @@
       if (event.data.action === 'updateClock') {
         document.getElementById('clock-time').innerText = event.data.time;
       }
+
+      if (event.data.action === 'close') {
+        document.body.style.display = 'none';
+        document.getElementById('clock').style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      const key = event.key.toLowerCase();
+
+      if (key === 'escape'  ||  key === 'p') {
+        event.preventDefault();
+
+        const rulesVisible = document.getElementById('rules-box').style.display === 'block';
+
+        if (rulesVisible) {
+          hideRules();
+        } else {
+          fetch(`https://${GetParentResourceName()}/ToggleMenu`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+          });
+        }
+      }
     });
   </script>
 </body>
