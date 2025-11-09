@@ -1,5 +1,7 @@
 Config = {}
 
+Config.Framework = 'vorp' -- 'vorp' o 'rsg'
+
 Config.QuitMessage = "You have left the server"
 
 Config.MenuLabels = {
