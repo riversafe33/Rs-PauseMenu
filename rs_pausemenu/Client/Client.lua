@@ -15,9 +15,7 @@ CreateThread(function()
         Wait(0)
         if IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE_ALTERNATE') 
         or IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE') then
-            if Open then
-                ClosePauseMenu()
-            elseif canOpenMenu then
+            if canOpenMenu then
                 OpenPauseMenu()
             end
         end
@@ -95,8 +93,6 @@ end)
 RegisterNUICallback('ToggleMenu', function(_, cb)
     if Open then
         ClosePauseMenu()
-    elseif canOpenMenu then
-        OpenPauseMenu()
     end
     cb('ok')
 end)
