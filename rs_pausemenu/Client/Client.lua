@@ -111,10 +111,8 @@ RegisterNUICallback('SendAction', function(data, cb)
         LaunchUiAppByHash(`map`)
     elseif data.action == 'exit' then
         TriggerServerEvent("pausemenu:quit")
-    end
-
-    if data.action ~= 'rules' then
-        ClosePauseMenu()
+    elseif data.action == 'resume' then
+        ClosePauseMenu()  
     end
 end)
 
