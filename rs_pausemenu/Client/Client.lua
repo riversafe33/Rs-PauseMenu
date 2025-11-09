@@ -5,9 +5,11 @@ local canOpenMenu = false
 CreateThread(function()
     while true do
         Wait(0)
-        DisableControlAction(0, 0x4A903C11)
 
-        if IsDisabledControlJustPressed(0, 0x4A903C11) and canOpenMenu then
+        DisableControlAction(0, 'INPUT_FRONTEND_PAUSE') 
+        DisableControlAction(0, 'INPUT_FRONTEND_PAUSE_ALTERNATE') 
+
+        if (IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE') or IsDisabledControlJustPressed(0, 'INPUT_FRONTEND_PAUSE_ALTERNATE')) and canOpenMenu then
             OpenPauseMenu()
         end
     end
