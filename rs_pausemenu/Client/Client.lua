@@ -97,15 +97,11 @@ RegisterNUICallback('ToggleMenu', function(_, cb)
     cb('ok')
 end)
 
-RegisterNUICallback('exit', function(_, cb)
-    ClosePauseMenu()
-    cb('ok')
-end)
-
 RegisterNUICallback('SendAction', function(data, cb)
     cb('ok')
-
     if data.action == 'settings' then
+        SetNuiFocus(false, false)
+        ClosePauseMenu()
         LaunchUiAppByHash(`settings_menu`)
     elseif data.action == 'map' then
         LaunchUiAppByHash(`map`)
