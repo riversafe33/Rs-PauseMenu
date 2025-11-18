@@ -144,7 +144,6 @@ function OpenPauseMenu()
         end
 
         TaskPlayAnim(playerPed, animDict, animName, 1.0, 1.0, -1, 25, 0, false, false, false)
-        Wait(500)
         SetEntityAnimSpeed(playerPed, animDict, animName, 0.8)
 
         local model = GetHashKey("mp001_mp_map01x")
