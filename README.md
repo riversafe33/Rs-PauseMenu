@@ -16,4 +16,5 @@ Your support goes directly toward upgrading my PC and developing more free scrip
 
 <img width="1232" height="677" alt="image" src="https://github.com/user-attachments/assets/be0a8a5d-5cd6-4ddb-939d-27e76b90e79d" />
 
-<img width="1851" height="1040" alt="image" src="https://github.com/user-attachments/assets/169c4e76-fa8c-4c9c-ae04-948f741c1fcf" />
+<img width="1527" height="1034" alt="image" src="https://github.com/user-attachments/assets/234e6276-440c-48ac-a459-7d7f309f0065" />
+
