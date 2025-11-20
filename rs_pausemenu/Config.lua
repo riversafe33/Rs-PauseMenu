@@ -16,7 +16,7 @@ Config.MenuLabels = {
 }
 
 Config.TextRules = {
-    -- Page 1: General Conduct
+    -- Page 1
     [[
     Rule 1:
     Respect all players. Insults, harassment, or discrimination will not be tolerated.
@@ -35,10 +35,7 @@ Config.TextRules = {
 
     Rule 6:
     Character names must fit the roleplay setting e.g. John McCarthy not xxDarkKillerxx
-    ]],
 
-    -- Page 2: Roleplay and In-Game Behavior
-    [[
     Rule 7:
     Avoid metagaming: do not use information your character wouldn’t realistically know.
 
@@ -46,8 +43,11 @@ Config.TextRules = {
     Avoid powergaming: do not force unrealistic actions or outcomes on other players.
 
     Rule 9:
-    All conflicts must have a valid roleplay reason. Do not shoot or rob without proper in-character motivation.
+    All conflicts must have a valid roleplay reason. Do not shoot or rob without proper in-character motivation.    
+    ]],
 
+    -- Page 2
+    [[
     Rule 10:
     Robberies or murders must be justified and developed through proper roleplay.
 
